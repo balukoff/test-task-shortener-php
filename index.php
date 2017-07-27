@@ -6,13 +6,12 @@
  $shortURL = new ControllerShort();
  try {
 	$code = $shortURL->shortCodeToUrl($_GET["route"]);
-	
 	if ($code) header("Location: $code");
-	else print_r($code);//header("Location: ./index.php");
+	else header("Location: ./index.php");
     exit;
 }
 catch (\Exception $e) {
-    // Записываем в журнал ошибку и перенаправляем на страницу.
+    // display error screen
     $m = file_get_contents('./view/pages/error.php');
 	echo $m;
     exit;
@@ -21,6 +20,7 @@ catch (\Exception $e) {
 
 ?>
 <html>
+<title>Test task for XIAG company</title>
 <head>
 <link rel='stylesheet' href='./view/stylesheet/style.css'>
 <script language='javascript' src='./view/js/script.js'></script>

@@ -10,7 +10,7 @@ function addEvent(elem, type, handler){
   }
   return false;
 }
-// Универсальная функция для создания нового объекта XMLHttpRequest
+// create XMLHttpRequest
 function getXhrObject(){
   if(typeof XMLHttpRequest === 'undefined'){
     XMLHttpRequest = function() {
@@ -21,59 +21,58 @@ function getXhrObject(){
   }
   return new XMLHttpRequest();
 }
-// Функция Ajax-запроса
+// ajax function
 function sendAjaxRequest(e){
   var evt = e || window.event;
-  // Отменяем стандартное действие формы по событию submit
+  // Standart submit form event
   if(evt.preventDefault){
-    evt.preventDefault(); // для нормальных браузров
+    evt.preventDefault(); 
   } else {
-    evt.returnValue = false; // для IE старых версий
+    evt.returnValue = false; // for IE
   }
-  // получаем новый XMLHttpRequest-объект
+  // get new xhr object
   var xhr = getXhrObject();
   if(xhr){
-    // формируем данные формы
-    var elems = nativeForm.elements, // все элементы формы
-        url = nativeForm.action, // путь к обработчику
+    // form data
+    var elems = nativeForm.elements, // all elements
+        url = nativeForm.action, // action path
         params = [],
         elName,
         elType;
-    // проходимся в цикле по всем элементам формы
     for(var i = 0; i < elems.length; i++){
-      elType = elems[i].type; // тип текущего элемента (атрибут type)
-      elName = elems[i].name; // имя текущего элемента (атрибут name)
-      if(elName){ // если атрибут name присутствует
+      elType = elems[i].type; 
+      elName = elems[i].name; 
+      if(elName){ 
        params.push(elems[i].name + '=' + elems[i].value);
       }
     }
 
-    xhr.open('POST', url, true); // открываем соединение
-    // заголовки - для POST-запроса
+    xhr.open('POST', url, true); // open connection
+    // set headers
     xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
                 
     xhr.onreadystatechange = function() { 
       console.log(JSON.stringify(xhr.responseText));
-	  if(xhr.readyState == 4 && xhr.status == 200) { // проверяем стадию обработки и статус ответа сервера
+	  if(xhr.readyState == 4 && xhr.status == 200) { // check server response status
         
 		var __result = JSON.parse(xhr.responseText);
 		
-		output.innerHTML = __result.error || __result.site + __result.code; // если все хорошо, то выводим полученный ответ
+		output.innerHTML = __result.error || __result.site + __result.code; // display result if ok
       }
     }
 	output.innerHTML = '<img src="view/images/ajax-loader.gif" style="margin-left: 30px">';
-    // стартуем ajax-запрос
-    xhr.send(params.join('&')); // для GET запроса - xhr.send(null);
+    // starts ajax post request
+    xhr.send(params.join('&')); 
   }
   return false;
 }
 
-// Инициализация после загрузки документа
+// init function after document loaded
 function init(){
   output = d.getElementById('result');
   nativeForm = d.getElementById('nativeForm');
   addEvent(nativeForm, 'submit', sendAjaxRequest);
   return false;
 }
-// Обработчик события загрузки документа
+// document load event 
 addEvent(window, 'load', init);

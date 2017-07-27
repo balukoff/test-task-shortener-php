@@ -4,15 +4,15 @@ class ControllerShort{
  private $link;
  public  $error;
  private $chars = "123456789bcdfghjkmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ";
-  
  
  function __construct(){
   require_once './config.php';
   require_once './model/short.php';
+  //$this->link = null;
   $this->model = new ModelShort;
   $this->model->connect(DB_HOST, DB_NAME, DB_USERNAME, DB_PASSWORD);
-  
-  if (!empty($this->error)) print $this->error;
+  $this->link = $this->model->getLink();
+  if (!$this->link) $this->error = 'Database connection error';
  }
  
  // check if url real exists 
@@ -31,10 +31,11 @@ class ControllerShort{
  // check if url exists in database
  
  protected function urlExistsInDb($url) {
-       if ((int)$this->model->urlExistsInDB($url) == 0){
+       if (!$this->link) return false;
+	   if ((int)$this->model->urlExistsInDB($url) == 0){
 	    return false;
 	   }else return true;
-    }
+ }
  
  // create short url code and insert into database
  
@@ -50,17 +51,18 @@ class ControllerShort{
 }
 
  public function urlToShortCode($url) {
-        $shortCode = array();
-		if (empty($url)) {
-            $this->error = "Не получен адрес URL.";
+	   if ($this->link){ 
+	   $shortCode = array();
+		if (empty($url)){
+            $this->error = "Can't get URL";
         }
-        if ($this->validateUrlFormat($url) == false) {
-                $this->error = "Адрес URL имеет неправильный формат.";
+        if ($this->validateUrlFormat($url) == false){
+                $this->error = "URL has error format.";
         }
         if (CHECKURL_EXISTS) 
 	   {
-            if (!$this->checkUrlExists($url)) {
-                  $this->error = "Адрес URL не существует.";
+            if (!$this->checkUrlExists($url)){
+                  $this->error = "URL doesn't exists";
             }
         }
         $__shortCode = $this->urlExistsInDb($url);
@@ -70,11 +72,12 @@ class ControllerShort{
 		$__shortCode = $this->model->getCodeFromDB($url);
 		}
      $shortCode['code'] =  $__shortCode;
-	 $shortCode['error'] = $this->error;
 	 $shortCode['site'] = SITE_LINK;
+	 }
+	 $shortCode['error'] = $this->error;
 	 
 	 return $shortCode;
-    }
+ }
 
   protected function convertIntToShortCode($id) {
         $id = intval($id);
@@ -83,29 +86,17 @@ class ControllerShort{
     }
 
   public function shortCodeToUrl($code) {
-        if (empty($code)) {
-            //throw new \Exception(
-			$this->error = "Не задан короткий код.";//);
+        if (!$this->link) return false;
+		if (empty($code)) {           
+			$this->error = "ShortCode is in error format.";
 			return false;
         }
-        /*if ($this->validateShortCode($code) == false) {
-            //throw new \Exception(
-              $this->error = "Короткий код имеет неправильный формат.";
-        }*/
         $urlRow = $this->model->getUrlFromDb($code);
-		//print_r($urlRow);
         if (empty($urlRow)) {
-         //   throw new \Exception(
-                $this->error = "Короткий код не содержится в базе.";//);
+                $this->error = "Database has no short URL.";
                 return false;
 		}
         return $urlRow[0];
     }
-	
-    protected function validateShortCode($code) {
-        return preg_match("|[" . self::$chars . "]+|", $code);
-    }
-	
 }
-
 ?>
