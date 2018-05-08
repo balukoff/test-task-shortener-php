@@ -1,16 +1,11 @@
 <?
- // database host option
- define('DB_HOST', 'localhost');
- // database username option
- define('DB_USERNAME', 'root');
- // database name option
- define('DB_NAME', 'short');
- // database password option
- define('DB_PASSWORD', '');
- // prefix for short code url
- define('SHORTURL_PREFIX', '');
- // option - should we check that url exists or not
- define('CHECKURL_EXISTS', false);
- // link to your site, which will be concatecated with short url
- define('SITE_LINK', 'http://localhost/short/');
+ define('DIR_APP', 'app/');
+ define('DIR_CORE', 'system/core/');
+ define('DIR_LIBRARY', 'system/library/');
+ define('DIR_CONTENT', 'content/');
+ define('DIR_IMAGE', 'content/image/');
+ define('SANDBOX_URL', 'https://api.sandbox.nrg-tk.ru/v2/');
+ define('SANDBOX_LOGIN', 'test_user37%40nrg-tk.ru');
+ define('SANDBOX_PASSWORD', 'hqbw%3Fbc*%24TJ');
+ define('HOST', 'http://'.$_SERVER['HTTP_HOST'].'/energy-testtask/');
 ?>
